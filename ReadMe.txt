@@ -3,12 +3,22 @@ CoreDataBooks
 
 This sample illustrates a number of aspects of working with the Core Data framework with an iPhone application:
 
+このサンプルではCore Dataフレームワークを使ったiOSアプリケーションの開発方法をいくつかの面で説明する
+
 * Use of an instance of NSFetchedResultsController object to manage a collection of objects to be displayed in a table view.
 * Use of a child managed object context to isolate changes during an add operation.
 * Undo and redo. 
 * Database initialization.
 
+* テーブルビューに表示されるオブジェクトのコレクションを管理する
+* アンドゥとリドゥ
+*
+* データベースの初期化
+
 This sample assumes some familiarity with the Core Data framework, and with UIKit view controllers and table views. As a minimum, you should have worked through the "Core Data Tutorial for iOS" tutorial.
+
+このサンプルはいくつかのよく知られたCore DataフレームワークとUIKitビューコントローラ，テーブルビューの使い方について説明する  
+最低限として、Core Dataチュートリアルは事前にやっておくこと
 
 
 Build Requirements

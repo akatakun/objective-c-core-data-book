@@ -45,8 +45,11 @@
  
  */
 
+// "@"で始まるものはプログラムではなくコンパイラへの指示(コンパイラディレクティブ)
 @interface CoreDataBooksAppDelegate : NSObject <UIApplicationDelegate> 
 
+// @property: プロパティ宣言(Interface部で定義)
+// PublicなProperty
 @property (nonatomic, strong) UIWindow *window;
 
 @end

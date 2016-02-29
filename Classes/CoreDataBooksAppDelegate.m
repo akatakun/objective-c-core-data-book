@@ -50,17 +50,22 @@
 
 @interface CoreDataBooksAppDelegate ()
 
+// PrivateなProperty
+// テーブル定義
 @property (nonatomic, strong, readonly) NSManagedObjectModel *managedObjectModel;
+// レコード操作
 @property (nonatomic, strong, readonly) NSManagedObjectContext *managedObjectContext;
+// モデルとストアの仲介(ストアコーディネータ)
 @property (nonatomic, strong, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end
 
-
+// プラグママークを使ってクラスごとに実装を分けて見通しを良くする
 #pragma mark -
 
 @implementation CoreDataBooksAppDelegate
 
+// プロパティ実装(Implementation部で定義)
 @synthesize managedObjectModel=_managedObjectModel, managedObjectContext=_managedObjectContext, persistentStoreCoordinator=_persistentStoreCoordinator;
 
 
@@ -92,6 +97,7 @@
 {
     NSError *error;
     if (_managedObjectContext != nil) {
+        // 変更があり、保存に失敗したか
         if ([_managedObjectContext hasChanges] && ![_managedObjectContext save:&error]) {
             /*
              Replace this implementation with code to handle the error appropriately.
@@ -119,7 +125,10 @@
 
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
+        // NSManagedObjectContextクラスはスレッドセーフではないため、スレッドごとにオブジェクトを用意する必要がある
+        // NSMainQueueConcurrencyType: Contextに対して専用のスレッドを割り当てる
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        // ストアコーディネータを設定する
         [_managedObjectContext setPersistentStoreCoordinator: coordinator];
     }
     return _managedObjectContext;
@@ -132,6 +141,12 @@
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
+    // NSBundleクラス: アプリケーションのリソースを管理する
+    // mainBundle: 実行中のアプリケーションのBundleを表す
+    // [NSBundle mainBundle]:
+    // @"file:///Users/#_user_name_/Library/Developer/CoreSimulator/Devices/#_uuid_/data/Containers/Bundle/Application/#_uuid_/CoreDataBooks.app"
+    // [[NSBundle mainBundle] URLForResource:@"CoreDataBooks" withExtension:@"momd"]:
+    // @"file:///Users/#_user_name_/Library/Developer/CoreSimulator/Devices/#_uuid_/data/Containers/Bundle/Application/#_uuid_/CoreDataBooks.app/CoreDataBooks.momd/"
     NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"CoreDataBooks" withExtension:@"momd"];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
@@ -147,14 +162,19 @@
         return _persistentStoreCoordinator;
     }
 
+    // [self applicationDocumentsDirectory]: 実行中のアプリケーションの"Document/"ディレクトリのURLを取得する
+    // @"file:///Users/#_user_name_/Library/Developer/CoreSimulator/Devices/#_uuid_/data/Containers/Data/Application/#_uuid_/Documents/"
+    // [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreDataBooks.CDBStore"]:
+    // @"file:///Users/#_user_name_/Library/Developer/CoreSimulator/Devices/#_uuid_/data/Containers/Data/Application/#_uuid_/Documents/CoreDataBooks.CDBStore"
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreDataBooks.CDBStore"];
-
+    
     /*
      Set up the store.
      For the sake of illustration, provide a pre-populated default store.
      */
     NSFileManager *fileManager = [NSFileManager defaultManager];
     // If the expected store doesn't exist, copy the default store.
+    // ストアのファイルが存在しなければ、デフォルトデータのファイルをコピーする
     if (![fileManager fileExistsAtPath:[storeURL path]]) {
         NSURL *defaultStoreURL = [[NSBundle mainBundle] URLForResource:@"CoreDataBooks" withExtension:@"CDBStore"];
         if (defaultStoreURL) {
